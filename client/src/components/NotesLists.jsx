@@ -46,13 +46,12 @@ export default () => {
           {notes.length === 0 && <p>Loading</p>}
           {notes.length &&
             notes.map((note) => (
-              <NavLink
-                to={`/${note._id}`}
-                key={`${note._id}`}
-                style={{ textDecoration: "none", color: "#121212" }}
-              >
-                <NoteItem title={note.title} description={note.description} />
-              </NavLink>
+              <NoteItem
+                title={note.title}
+                description={note.description}
+                id={note._id}
+                key={note._id}
+              />
             ))}
         </>
       </div>

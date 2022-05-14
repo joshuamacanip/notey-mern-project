@@ -5,7 +5,7 @@ const { createCustomError } = require("../error/customError");
 // GET all notes
 const getNotes = async (req, res, next) => {
   //query all notes
-  const notes = await Note.find({});
+  const notes = await Note.find({}).sort({ createdAt: "desc" });
 
   //check
   if (!notes) {
@@ -30,7 +30,7 @@ const getOneNote = async (req, res, next) => {
   }
 
   //response
-  res.status(200).json({ note });
+  res.status(200).json(note);
 };
 
 //POST - create one one
@@ -84,7 +84,7 @@ const deleteNote = async (req, res, next) => {
   }
 
   //response
-  res.status(200).json({ note });
+  res.status(200).json({ id: note._id });
 };
 
 module.exports = {

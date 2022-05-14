@@ -1,5 +1,8 @@
 import styled from "styled-components";
 import { FaPencilAlt, FaEraser } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { deleteNote } from "../features/notes";
+import { Link } from "react-router-dom";
 
 const NoteItemCard = styled.article`
   padding: 14px;
@@ -9,7 +12,6 @@ const NoteItemCard = styled.article`
   transition: box-shadow 300ms ease-in-out;
 
   &:hover {
-    cursor: pointer;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.19), 0 3px 6px rgba(0, 0, 0, 0.23); 
     border 1px solid #eee;
   }
@@ -21,9 +23,12 @@ const NoteItemCard = styled.article`
   .card__description{ 
     font-weight: 300; 
     font-size: 16px;
-  }       
-
-
+  } 
+  
+  .note__link{ 
+    color: #121212; 
+    text-decoration: none;
+  }
 `;
 
 const FlexContainer = styled.div`
@@ -38,20 +43,34 @@ const NoteControlBtn = styled.button`
   text-align: center;
 `;
 
-export default ({ title, description }) => {
+export default ({ title, description, id }) => {
+  const dispatch = useDispatch();
+
+  const onClickDelete = (id) => {
+    dispatch(deleteNote(id));
+  };
+
   return (
     <NoteItemCard>
       <FlexContainer>
         <div>
-          <h6 className="card__title">{title}</h6>
-          <p className="card__description">{description}</p>
+          <Link to={`/${id}`} className="note__link">
+            <h6 className="card__title">{title}</h6>
+            <p className="card__description">{description}</p>
+          </Link>
         </div>
 
         <div>
           <NoteControlBtn color="red">
             <FaPencilAlt />
           </NoteControlBtn>
-          <NoteControlBtn>
+          <NoteControlBtn
+            onClick={(e) => {
+              e.preventDefault();
+
+              onClickDelete(id);
+            }}
+          >
             <FaEraser />
           </NoteControlBtn>
         </div>

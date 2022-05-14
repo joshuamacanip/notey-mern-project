@@ -3,7 +3,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 //initial state
 const initialState = {
   notes: [],
-  status: null,
+  status: {},
+  note: null,
 };
 
 //GET Notes
@@ -17,6 +18,22 @@ export const getNotes = createAsyncThunk("notes/getNotes", async () => {
   //return notes
   return notes;
 });
+
+export const getOneNote = createAsyncThunk(
+  "notes/getOneNote",
+  async (noteId) => {
+    const response = await fetch(
+      `http://localhost:8080/api/v1/note/${noteId}`,
+      {
+        method: "GET",
+      }
+    );
+
+    const note = await response.json();
+
+    return note;
+  }
+);
 
 //POST Note
 export const postNote = createAsyncThunk(
@@ -35,6 +52,23 @@ export const postNote = createAsyncThunk(
     const note = await response.json();
 
     //return note
+    return note;
+  }
+);
+
+//DELETE Note
+export const deleteNote = createAsyncThunk(
+  "/notes/deleteNote",
+  async (noteId) => {
+    const response = await fetch(
+      `http://localhost:8080/api/v1/note/${noteId}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    const note = await response.json();
+
     return note;
   }
 );
@@ -62,6 +96,26 @@ const notesSlices = createSlice({
         state.notes = [...state.notes, action.payload];
       })
       .addCase(postNote.rejected, (state) => {
+        state.status = "Failed";
+      })
+      .addCase(deleteNote.pending, (state) => {
+        state.status = "Loading";
+      })
+      .addCase(deleteNote.fulfilled, (state, action) => {
+        state.status = "Completed";
+        state.notes.filter((note) => note._id !== action.payload);
+      })
+      .addCase(deleteNote.rejected, (state) => {
+        state.status = "Failed";
+      })
+      .addCase(getOneNote.pending, (state) => {
+        state.status = "Loading";
+      })
+      .addCase(getOneNote.fulfilled, (state, action) => {
+        state.status = "Completed";
+        state.note = action.payload;
+      })
+      .addCase(getOneNote.rejected, (state) => {
         state.status = "Failed";
       });
   },
